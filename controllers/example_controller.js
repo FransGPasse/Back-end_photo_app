@@ -2,9 +2,9 @@
  * Example Controller
  */
 
-const debug = require('debug')('books:example_controller');
-const { matchedData, validationResult } = require('express-validator');
-const models = require('../models');
+const debug = require("debug")("books:example_controller");
+const { matchedData, validationResult } = require("express-validator");
+const models = require("../models");
 
 /**
  * Get all resources
@@ -15,10 +15,10 @@ const index = async (req, res) => {
 	const examples = await models.Example.fetchAll();
 
 	res.send({
-		status: 'success',
+		status: "success",
 		data: examples,
 	});
-}
+};
 
 /**
  * Get a specific resource
@@ -26,14 +26,15 @@ const index = async (req, res) => {
  * GET /:exampleId
  */
 const show = async (req, res) => {
-	const example = await new models.Example({ id: req.params.exampleId })
-		.fetch();
+	const example = await new models.Example({
+		id: req.params.exampleId,
+	}).fetch();
 
 	res.send({
-		status: 'success',
+		status: "success",
 		data: example,
 	});
-}
+};
 
 /**
  * Store a new resource
@@ -44,7 +45,7 @@ const store = async (req, res) => {
 	// check for any validation errors
 	const errors = validationResult(req);
 	if (!errors.isEmpty()) {
-		return res.status(422).send({ status: 'fail', data: errors.array() });
+		return res.status(422).send({ status: "fail", data: errors.array() });
 	}
 
 	// get only the validated data from the request
@@ -55,18 +56,18 @@ const store = async (req, res) => {
 		debug("Created new example successfully: %O", example);
 
 		res.send({
-			status: 'success',
+			status: "success",
 			data: example,
 		});
-
 	} catch (error) {
 		res.status(500).send({
-			status: 'error',
-			message: 'Exception thrown in database when creating a new example.',
+			status: "error",
+			message:
+				"Exception thrown in database when creating a new example.",
 		});
 		throw error;
 	}
-}
+};
 
 /**
  * Update a specific resource
@@ -77,12 +78,14 @@ const update = async (req, res) => {
 	const exampleId = req.params.exampleId;
 
 	// make sure example exists
-	const example = await new models.Example({ id: exampleId }).fetch({ require: false });
+	const example = await new models.Example({ id: exampleId }).fetch({
+		require: false,
+	});
 	if (!example) {
 		debug("Example to update was not found. %o", { id: exampleId });
 		res.status(404).send({
-			status: 'fail',
-			data: 'Example Not Found',
+			status: "fail",
+			data: "Example Not Found",
 		});
 		return;
 	}
@@ -90,7 +93,7 @@ const update = async (req, res) => {
 	// check for any validation errors
 	const errors = validationResult(req);
 	if (!errors.isEmpty()) {
-		return res.status(422).send({ status: 'fail', data: errors.array() });
+		return res.status(422).send({ status: "fail", data: errors.array() });
 	}
 
 	// get only the validated data from the request
@@ -101,18 +104,18 @@ const update = async (req, res) => {
 		debug("Updated example successfully: %O", updatedExample);
 
 		res.send({
-			status: 'success',
+			status: "success",
 			data: example,
 		});
-
 	} catch (error) {
 		res.status(500).send({
-			status: 'error',
-			message: 'Exception thrown in database when updating a new example.',
+			status: "error",
+			message:
+				"Exception thrown in database when updating a new example.",
 		});
 		throw error;
 	}
-}
+};
 
 /**
  * Destroy a specific resource
@@ -121,10 +124,11 @@ const update = async (req, res) => {
  */
 const destroy = (req, res) => {
 	res.status(400).send({
-		status: 'fail',
-		message: 'You need to write the code for deleting this resource yourself.',
+		status: "fail",
+		message:
+			"You need to write the code for deleting this resource yourself.",
 	});
-}
+};
 
 module.exports = {
 	index,
@@ -132,4 +136,4 @@ module.exports = {
 	store,
 	update,
 	destroy,
-}
+};

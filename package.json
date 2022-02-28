@@ -22,5 +22,17 @@
   "devDependencies": {
     "cross-env": "^7.0.3",
     "nodemon": "^2.0.15"
-  }
+  },
+  "main": "app.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/FransGPasse/Back-end_photo_app.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/FransGPasse/Back-end_photo_app/issues"
+  },
+  "homepage": "https://github.com/FransGPasse/Back-end_photo_app#readme",
+  "description": ""
 }
