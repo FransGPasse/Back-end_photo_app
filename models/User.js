@@ -1,5 +1,5 @@
-module.exports = (bookhelf) => {
-    return bookhelf.model("User", {
+module.exports = (bookshelf) => {
+    return bookshelf.model("User", {
         tableName: "User",
     })
 }
