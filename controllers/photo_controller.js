@@ -3,7 +3,7 @@ const { matchedData, validationResult } = require("express-validator");
 const models = require("../models");
 const bcrypt = require("bcrypt");
 
-//!Läser alla "photo" i databasen photo_app
+/* //!Läser alla "photo" i databasen photo_app
 const readAll = async (req, res) => {
 	const all_photos = await models.Photo.fetchAll();
 
@@ -13,15 +13,26 @@ const readAll = async (req, res) => {
 			photos: all_photos,
 		},
 	});
+}; */
+
+//!Läser alla "photo" i databasen photo_app
+const readAll = async (req, res) => {
+	// get user and also eager-load the books-relation
+	// const user = await new models.User({ id: req.user.id })
+	// 	.fetch({ withRelated: ['books'] });
+
+	// "lazy load" the books-relation
+	await req.user.load("Photo");
+
+	res.status(200).send({
+		status: "success",
+		data: {
+			books: req.user.related("Photo"),
+		},
+	});
 };
 
-
 //!Skapar ett "photo" i databasen photo_app
-/**
- * Store a new resource
- *
- * POST /
- */
 const register = async (req, res) => {
 	// check for any validation errors
 	const errors = validationResult(req);

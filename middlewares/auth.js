@@ -1,14 +1,7 @@
-/**
- * Authentication Middleware
- */
-
 const bcrypt = require("bcrypt");
-const debug = require("debug")("books:auth");
+const debug = require("debug")("photo_app:auth");
 const { User } = require("../models");
 
-/**
- * HTTP Basic Authentication
- */
 const basic = async (req, res, next) => {
 	debug("Hello from auth.basic!");
 
@@ -45,20 +38,21 @@ const basic = async (req, res, next) => {
 	const decodedPayload = Buffer.from(base64Payload, "base64").toString(
 		"ascii"
 	);
-	// decodedPayload = "username:password"
+	// decodedPayload = "email:password"
 
-	// split decoded payload into "<username>:<password>"
-	const [username, password] = decodedPayload.split(":");
+	// split decoded payload into "<email>:<password>"
+	const [email, password] = decodedPayload.split(":");
 
-	// find user based on the username (bail if no such user exists)
-	const user = await new User({ username }).fetch({ require: false });
+	// find user based on the email (bail if no such user exists)
+	const user = await new User({ email }).fetch({ require: false });
 	if (!user) {
 		return res.status(401).send({
 			status: "fail",
-			data: "Authorization failed",
+			data: "Authorization2 failed",
 		});
 	}
 	const hash = user.get("password");
+
 
 	// hash the incoming cleartext password using the salt from the db
 	// and compare if the generated hash matches the db-hash
@@ -66,7 +60,7 @@ const basic = async (req, res, next) => {
 	if (!result) {
 		return res.status(401).send({
 			status: "fail",
-			data: "Authorization failed",
+			data: "Authorization1 failed",
 		});
 	}
 

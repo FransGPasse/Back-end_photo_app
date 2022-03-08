@@ -16,11 +16,6 @@ const readAll = async (req, res) => {
 };
 
 //!Skapar en "User" i databasen photo_app
-/**
- * Store a new resource
- *
- * POST /
- */
 const register = async (req, res) => {
 	// check for any validation errors
 	const errors = validationResult(req);
@@ -30,6 +25,9 @@ const register = async (req, res) => {
 
 	// get only the validated data from the request
 	const validData = matchedData(req);
+
+	//Hashes the password 10 times
+	validData.password = await bcrypt.hash(validData.password, 10);
 
 	console.log("The validated data:", validData);
 

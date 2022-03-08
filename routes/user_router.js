@@ -8,5 +8,4 @@ router.get("/", userController.readAll);
 
 router.post("/", userValidationRules.createRules, userController.register);
 
-
 module.exports = router;
