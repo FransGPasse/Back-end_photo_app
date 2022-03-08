@@ -15,6 +15,8 @@ const basic = async (req, res, next) => {
 		});
 	}
 
+	
+
 	debug("Authorization header: %o", req.headers.authorization);
 
 	// split header into "<authSchema> <base64Payload>"

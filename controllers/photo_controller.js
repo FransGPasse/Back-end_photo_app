@@ -27,7 +27,7 @@ const readAll = async (req, res) => {
 	res.status(200).send({
 		status: "success",
 		data: {
-			books: req.user.related("Photo"),
+			Photo: req.user.related("Photo"),
 		},
 	});
 };
