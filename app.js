@@ -14,4 +14,7 @@ app.use(express.urlencoded({ extended: false }));
 // routes
 app.use(require("./routes"));
 
+console.log('Listening on http://localhost:3000');
+
+
 module.exports = app;

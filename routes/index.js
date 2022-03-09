@@ -11,4 +11,6 @@ router.use("/user", require("./user_router"));
 
 router.use("/photo", auth.basic, require("./photo_router"));
 
+router.use("/album", auth.basic, require("./album_router"));
+
 module.exports = router;

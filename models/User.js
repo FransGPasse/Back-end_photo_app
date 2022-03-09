@@ -4,5 +4,11 @@ module.exports = (bookshelf) => {
 		Photo() {
 			return this.hasMany("Photo");
 		},
+		Album() {
+			return this.hasMany("Album");
+		},
+/* 		async fetchById(id, fetchOptions = {}) {
+			return await new this({ id }).fetch(fetchOptions);
+		}, */
 	});
 };
