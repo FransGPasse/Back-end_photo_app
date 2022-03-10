@@ -1,8 +1,8 @@
-const debug = require("debug")("photo_app:user_controller");
 const { matchedData, validationResult } = require("express-validator");
 const models = require("../models");
 const bcrypt = require("bcrypt");
 
+/* 
 //!Läser alla "User" i databasen photo_app
 const readAll = async (req, res) => {
 	const all_users = await models.User.fetchAll();
@@ -14,11 +14,14 @@ const readAll = async (req, res) => {
 		},
 	});
 };
+ */
 
-//!Skapar en "User" i databasen photo_app
+//!Skapar en använare i databasen photo_app
 const register = async (req, res) => {
-	// check for any validation errors
+	//Kollar efter valideringsfel
 	const errors = validationResult(req);
+
+	//Och skickar isåfall med felkod och var det blev fel
 	if (!errors.isEmpty()) {
 		return res.status(422).send({ status: "fail", data: errors.array() });
 	}
@@ -50,4 +53,4 @@ const register = async (req, res) => {
 	}
 };
 
-module.exports = { readAll, register };
+module.exports = { register };

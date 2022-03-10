@@ -1,11 +1,12 @@
-const debug = require("debug")("photo_app:photo_controller");
 const { matchedData, validationResult } = require("express-validator");
 const models = require("../models");
 
-//!Läser alla foton som tillhör den autentiserade användaren i databasen photo_app
+//!Visar alla foton som tillhör användaren i databasen photo_app
 const showAll = async (req, res) => {
+	//"Lazy"-laddar alla albumn som tillhör den autentiserade användare
 	await req.user.load("Photo");
 
+	//Skickar statuskod 200 om det godkänns och skickar med fotonen. Om det inte godkänns är det fel vid autentiseringen och då kommer felkod därifrån.
 	res.status(200).send({
 		status: "success",
 		data: {
@@ -14,26 +15,26 @@ const showAll = async (req, res) => {
 	});
 };
 
-//!Visar ett specifikt foto från databasen photo_app
+//!Visar ett specifikt foto som tillhör användaren från databasen photo_app
 const showSpecific = async (req, res) => {
-	
 	//"Lazy"-laddar alla foton som tillhör den autentiserade användaren
 	await req.user.load("Photo");
 
-	//Lägger alla foton i en variabel
+	//Lägger alla användarens foton i en variabel
 	const relatedPhotos = req.user.related("Photo");
 
 	//Kollar ifall användaren äger fotot som stämmer överens med ID:t i requesten
 	usersPhoto = relatedPhotos.find((photo) => photo.id == req.params.id);
 
-	//If it does, fail
+	//Om inte fotot finns eller användaren inte har behörighet till det så skickas denna felkoden annars...
 	if (!usersPhoto) {
 		return res.send({
 			status: "fail",
-			data: "Album doesn't belong to user or doesn't exist. 😌",
+			data: "Photo doesn't belong to user or doesn't exist. 😌",
 		});
 	}
 
+	//...Skickar vi ut det
 	res.send({
 		status: "success",
 		data: {
@@ -44,29 +45,34 @@ const showSpecific = async (req, res) => {
 
 //!Skapar ett "photo" i databasen photo_app
 const register = async (req, res) => {
-	// check for any validation errors
+	//Kollar efter valideringsfel
 	const errors = validationResult(req);
+
 	if (!errors.isEmpty()) {
+		//Och skickar isåfall med felkod och var det blev fel
 		return res.status(422).send({ status: "fail", data: errors.array() });
 	}
 
 	const validData = matchedData(req);
 	validData.user_id = req.user.id;
 
+	//Försöker lägga til ett foto i databasen
 	try {
 		const photo = await new models.Photo(validData).save();
-		debug("Created new photo successfully: %O", photo);
-
 		res.send({
 			status: "success",
+			message: "Photo created successfully 👍🏼",
 			data: {
 				photo,
 			},
 		});
+
+		//Skickar en felkod om något gick snett från serverns håll
 	} catch (error) {
 		res.status(500).send({
 			status: "error",
-			message: "Exception thrown in database when creating a new photo.",
+			message:
+				"Something went wrong when trying to create a photo in the database. 😵",
 		});
 		throw error;
 	}
@@ -74,44 +80,53 @@ const register = async (req, res) => {
 
 //!Uppdaterar ett foto i databasen photo_app
 const update = async (req, res) => {
-	const photoId = req.params.id;
+	const Photo_id = req.params.id;
+	const User_id = req.user.id;
 
-	//Kollar så fotot finns
-	const photo = await new models.Photo({ id: photoId }).fetch({
+	//Kollar så fotot finns och att det tillhör användaren
+	const photo = await new models.Photo({
+		id: Photo_id,
+		User_id: User_id,
+	}).fetch({
 		require: false,
 	});
+
+	//Om inte så skickas denna felkoden
 	if (!photo) {
-		debug("Photo to update was not found. %o", { id: photoId });
 		res.status(404).send({
 			status: "fail",
-			data: "Photo Not Found",
+			data: "Either the photo doesn't exist or the user isn't authorized. 😌",
 		});
 		return;
 	}
 
-	// check for any validation errors
+	//Kollar efter valideringsfel
 	const errors = validationResult(req);
+
+	//Och skickar isåfall med felkod och var det blev fel
 	if (!errors.isEmpty()) {
 		return res.status(422).send({ status: "fail", data: errors.array() });
 	}
 
-	// get only the validated data from the request
+	//Försöker uppdatera ett foto i databasen
 	const validData = matchedData(req);
 
 	try {
 		const updatedPhoto = await photo.save(validData);
-		debug("Updated photo successfully: %O", updatedPhoto);
 
 		res.send({
 			status: "success",
 			data: {
-				photo,
+				updatedPhoto,
 			},
 		});
+
+		//Skickar en felkod om något gick snett från serverns håll
 	} catch (error) {
 		res.status(500).send({
 			status: "error",
-			message: "Exception thrown in database when updating a new photo.",
+			message:
+				"Something went wrong when trying to create a photo in the database. 😵",
 		});
 		throw error;
 	}

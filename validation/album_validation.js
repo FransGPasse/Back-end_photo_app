@@ -18,7 +18,7 @@ const addPhotoToAlbumRules = [
 		}),
 ];
 
-const createAlbumRule = [body("title").optional().isLength({ min: 4 })];
+const createAlbumRule = [body("title").exists().isLength({ min: 3 })];
 
 module.exports = {
 	addPhotoToAlbumRules,
