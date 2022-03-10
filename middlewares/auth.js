@@ -50,7 +50,7 @@ const basic = async (req, res, next) => {
 	if (!user) {
 		return res.status(401).send({
 			status: "fail",
-			data: "Authorization2 failed",
+			data: "Authorization failed",
 		});
 	}
 	const hash = user.get("password");
@@ -62,7 +62,7 @@ const basic = async (req, res, next) => {
 	if (!result) {
 		return res.status(401).send({
 			status: "fail",
-			data: "Authorization1 failed",
+			data: "Authorization failed",
 		});
 	}
 

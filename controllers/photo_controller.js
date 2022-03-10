@@ -16,21 +16,21 @@ const showAll = async (req, res) => {
 
 //!Visar ett specifikt foto från databasen photo_app
 const showSpecific = async (req, res) => {
-
+	
 	//"Lazy"-laddar alla foton som tillhör den autentiserade användaren
 	await req.user.load("Photo");
 
-	//Lägger alla fotona i en variabel
+	//Lägger alla foton i en variabel
 	const relatedPhotos = req.user.related("Photo");
 
-	//
+	//Kollar ifall användaren äger fotot som stämmer överens med ID:t i requesten
 	usersPhoto = relatedPhotos.find((photo) => photo.id == req.params.id);
 
 	//If it does, fail
 	if (!usersPhoto) {
 		return res.send({
 			status: "fail",
-			data: "Photo doesn't belong to user. 😡",
+			data: "Album doesn't belong to user or doesn't exist. 😌",
 		});
 	}
 

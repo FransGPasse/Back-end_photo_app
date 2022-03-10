@@ -1,11 +1,12 @@
-const debug = require("debug")("Back-end_photo_app:album_controller");
 const { matchedData, validationResult } = require("express-validator");
 const models = require("../models");
 
 //!Läser alla album som tillhör den autentiserade användaren i databasen photo_app
 const readAll = async (req, res) => {
+	//"Lazy"-laddar alla albumn som tillhör den autentiserade användaren
 	await req.user.load("Album");
 
+	//Skickar statuskod 200 om det godkänns och skickar med albumet/albumen. Om det inte godkänns är det fel vid autentiseringen och då kommer felkod därifrån.
 	res.status(200).send({
 		status: "success",
 		data: {
@@ -16,28 +17,35 @@ const readAll = async (req, res) => {
 
 //!Visar ett specifikt album från databasen photo_app
 const readSpecific = async (req, res) => {
-
 	//"Lazy"-laddar alla albumn som tillhör den autentiserade användaren
 	await req.user.load("Album");
 
-	//Lägger alla albumna i en variabel
+	Album_id = req.params.id;
+	User_id = req.user.id;
+
+	//Lägger alla album i en variabel
 	const relatedAlbum = req.user.related("Album");
 
-	//
-	usersAlbum = relatedAlbum.find((photo) => photo.id == req.params.id);
+	//Kollar ifall användaren äger albumet som stämmer överens med ID:t i requesten
+	usersAlbum = relatedAlbum.find((album) => album.id == req.params.id);
 
-	//If it does, fail
+	//
 	if (!usersAlbum) {
 		return res.send({
 			status: "fail",
-			data: "Photo doesn't belong to user. 😡",
+			data: "Album doesn't belong to user or doesn't exist. 😌",
 		});
 	}
+
+	//Hämtar albumet med det inskickade ID:t och skickar med det relaterade fotonen
+	const selectedAlbum = await models.Album.fetchById(Album_id, {
+		withRelated: ["Photo"],
+	});
 
 	res.send({
 		status: "success",
 		data: {
-			usersAlbum,
+			selectedAlbum,
 		},
 	});
 };
@@ -56,11 +64,10 @@ const register = async (req, res) => {
 
 	try {
 		const album = await new models.Album(validData).save();
-		debug("Created new album successfully: %O", album);
 
-		res.send({
+		res.status(200).send({
 			status: "success",
-
+			message: "Album created successfully 🥳",
 			data: {
 				album,
 			},
@@ -92,10 +99,8 @@ const postToAlbum = async (req, res) => {
 	//Och kollar ifall det finns ett album med ID som stämmer överens med Album-ID:t från URL:n
 	usersAlbum = relatedAlbums.find((album) => album.id == req.params.id);
 
-	console.log(usersPhoto);
-	console.log(usersAlbum);
 
-	//Hämtar det valda albumet med redan tillhörande albumn, exklusive det som ska läggas till
+	//Hämtar det valda albumet med redan tillhörande album, exklusive det som ska läggas till
 	const album = await new models.Album({ id: req.params.id }).fetch({
 		withRelated: ["Photo"],
 	});
@@ -110,7 +115,7 @@ const postToAlbum = async (req, res) => {
 
 	//If it does, fail
 	if (existing_photo) {
-		return res.send({
+		return res.status(400).send({
 			status: "fail",
 			data: "Photo already exists.",
 		});
@@ -118,17 +123,17 @@ const postToAlbum = async (req, res) => {
 
 	//If it does, fail
 	if (!usersAlbum) {
-		return res.send({
+		return res.status(401).send({
 			status: "fail",
-			data: "Album doesn't belong to user. 😡",
+			data: "Album doesn't belong to user or doesn't exist. 😌",
 		});
 	}
 
 	//If it does, fail
 	if (!usersPhoto) {
-		return res.send({
+		return res.status(401).send({
 			status: "fail",
-			data: "Photo doesn't belong to user. 😡",
+			data: "Photo doesn't belong to user or doesn't exist. 😌",
 		});
 	}
 
@@ -136,7 +141,7 @@ const postToAlbum = async (req, res) => {
 	try {
 		await album.Photo().attach(validData.Photo_id);
 
-		res.send({
+		res.status(200).send({
 			status: "success",
 			data: null,
 		});
