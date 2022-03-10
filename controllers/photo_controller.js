@@ -2,7 +2,7 @@ const debug = require("debug")("photo_app:photo_controller");
 const { matchedData, validationResult } = require("express-validator");
 const models = require("../models");
 
-//!Läser alla "photos" som tillhör den autentiserade användaren i databasen photo_app
+//!Läser alla foton som tillhör den autentiserade användaren i databasen photo_app
 const showAll = async (req, res) => {
 	await req.user.load("Photo");
 
@@ -16,16 +16,28 @@ const showAll = async (req, res) => {
 
 //!Visar ett specifikt foto från databasen photo_app
 const showSpecific = async (req, res) => {
-		const photo = await new models.Photo({ id: req.params.id }).fetch({
-		withRelated: ["User", "Album"],
-	});
 
-	console.log(photo);
+	//"Lazy"-laddar alla foton som tillhör den autentiserade användaren
+	await req.user.load("Photo");
+
+	//Lägger alla fotona i en variabel
+	const relatedPhotos = req.user.related("Photo");
+
+	//
+	usersPhoto = relatedPhotos.find((photo) => photo.id == req.params.id);
+
+	//If it does, fail
+	if (!usersPhoto) {
+		return res.send({
+			status: "fail",
+			data: "Photo doesn't belong to user. 😡",
+		});
+	}
 
 	res.send({
 		status: "success",
 		data: {
-			photo,
+			usersPhoto,
 		},
 	});
 };
@@ -40,8 +52,6 @@ const register = async (req, res) => {
 
 	const validData = matchedData(req);
 	validData.user_id = req.user.id;
-
-	console.log("The validated data:", validData);
 
 	try {
 		const photo = await new models.Photo(validData).save();
@@ -64,9 +74,9 @@ const register = async (req, res) => {
 
 //!Uppdaterar ett foto i databasen photo_app
 const update = async (req, res) => {
-	const photoId = req.params.photoId;
+	const photoId = req.params.id;
 
-	// make sure photo exists
+	//Kollar så fotot finns
 	const photo = await new models.Photo({ id: photoId }).fetch({
 		require: false,
 	});

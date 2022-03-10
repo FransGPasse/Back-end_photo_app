@@ -2,15 +2,25 @@ const { body } = require("express-validator");
 const models = require("../models");
 
 //!Checks if the email inputted is an email address and is maximum 250 characters long
-const createRules = [body("title").exists().isLength({ min: 1 })];
+const addPhotoToAlbumRules = [
+	body("Photo_id")
+		.exists()
+		.bail()
+		.custom(async (value) => {
+			const photo = await new models.Photo({ id: value }).fetch({
+				require: false,
+			});
+			if (!photo) {
+				return Promise.reject(`Photo with ID ${value} does not exist.`);
+			}
 
-const updateRules = [
-	body("password").optional().isLength({ min: 4 }),
-	body("firstName").optional().isLength({ min: 2 }),
-	body("lastName").optional().isLength({ min: 2 }),
+			return Promise.resolve();
+		}),
 ];
 
+const createAlbumRule = [body("title").optional().isLength({ min: 4 })];
+
 module.exports = {
-	createRules,
-	updateRules,
+	addPhotoToAlbumRules,
+	createAlbumRule,
 };

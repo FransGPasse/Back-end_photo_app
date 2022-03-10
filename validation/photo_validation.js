@@ -9,9 +9,9 @@ const createRules = [
 ];
 
 const updateRules = [
-	body("password").optional().isLength({ min: 4 }),
-	body("firstName").optional().isLength({ min: 2 }),
-	body("lastName").optional().isLength({ min: 2 }),
+	body("title").optional().isLength({ min: 4 }),
+	body("comment").optional().isLength({ min: 2 }),
+	body("url").optional().isLength({ min: 2 }),
 ];
 
 module.exports = {

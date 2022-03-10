@@ -3,9 +3,22 @@ const router = express.Router();
 const albumValidation = require("../validation/album_validation");
 const albumController = require("../controllers/album_controller");
 
-/* Get all resources */
+/* Hämtar alla album som tillhör användaren */
 router.get("/", albumController.readAll);
 
-router.post("/", albumValidation.createRules, albumController.register);
+/* Hämtar ett album som tillhör användaren */
+router.get("/:id", albumController.readSpecific);
+
+/* Postar ett album */
+router.post("/", albumValidation.createAlbumRule, albumController.register);
+
+/* Lägger över ett foto till ett album */
+router.post(
+	"/:id/photo/",
+	albumValidation.addPhotoToAlbumRules,
+	albumController.postToAlbum
+);
+
+router.put;
 
 module.exports = router;
