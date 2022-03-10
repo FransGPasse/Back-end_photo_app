@@ -3,7 +3,7 @@ const router = express.Router();
 const photoController = require("../controllers/photo_controller");
 const photoValidation = require("../validation/photo_validation");
 
-/* Hämta alla foton som tillhör den autentiserade användaren */
+/* Hämtar alla foton som tillhör den autentiserade användaren */
 router.get("/", photoController.showAll);
 
 /* Hämter ett specifikt foto från den autentiserade användaren */

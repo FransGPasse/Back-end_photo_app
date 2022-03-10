@@ -1,4 +1,4 @@
-// Setting up the database connection
+//Uppkopplingen till databasen sker här
 const knex = require("knex")({
 	debug: true,
 	client: "mysql",

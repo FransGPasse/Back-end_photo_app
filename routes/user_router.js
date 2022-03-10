@@ -3,9 +3,7 @@ const router = express.Router();
 const userController = require("../controllers/user_controller");
 const userValidationRules = require("../validation/user_validation");
 
-/* Get all resources 
-router.get("/", userController.readAll); */
-
-router.post("/", userValidationRules.createRules, userController.register);
+/* Skapar en ny användare i databasen */
+router.post("/", userValidationRules.createUserRules, userController.register);
 
 module.exports = router;

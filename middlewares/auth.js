@@ -1,51 +1,35 @@
 const bcrypt = require("bcrypt");
-const debug = require("debug")("photo_app:auth");
 const { User } = require("../models");
 
+//Http basic authentication
 const basic = async (req, res, next) => {
-	debug("Hello from auth.basic!");
-
-	// make sure Authorization header exists, otherwise bail
+	//Kolla så att autentisering finns, annars skicka felmeddelande att det krävs
 	if (!req.headers.authorization) {
-		debug("Authorization header missing");
-
 		return res.status(401).send({
 			status: "fail",
 			data: "Authorization required",
 		});
 	}
 
-	
-
-	debug("Authorization header: %o", req.headers.authorization);
-
-	// split header into "<authSchema> <base64Payload>"
-	// "Basic cGVsbGU6c3ZhbnNsb3M="
-	// =>
-	// [0] = "Basic"
-	// [1] = "cGVsbGU6c3ZhbnNsb3M="
 	const [authSchema, base64Payload] = req.headers.authorization.split(" ");
 
-	// if authSchema isn't "basic", then bail
+	//Om inte authSchema är av typen basic så skicka felkod för det
 	if (authSchema.toLowerCase() !== "basic") {
-		debug("Authorization schema isn't basic");
-
 		return res.status(401).send({
 			status: "fail",
 			data: "Authorization required",
 		});
 	}
 
-	// decode payload from base64 => ascii
+	//Gör om från base64 till ascii
 	const decodedPayload = Buffer.from(base64Payload, "base64").toString(
 		"ascii"
 	);
-	// decodedPayload = "email:password"
 
-	// split decoded payload into "<email>:<password>"
+	//Dela upp på email och lösenord
 	const [email, password] = decodedPayload.split(":");
 
-	// find user based on the email (bail if no such user exists)
+	//Se ifall det finns en email som stämmer överens med användaren som försöker autentisera sig
 	const user = await new User({ email }).fetch({ require: false });
 	if (!user) {
 		return res.status(401).send({
@@ -53,11 +37,11 @@ const basic = async (req, res, next) => {
 			data: "Authorization failed",
 		});
 	}
+
 	const hash = user.get("password");
 
 
-	// hash the incoming cleartext password using the salt from the db
-	// and compare if the generated hash matches the db-hash
+	//Hasha lösenordet och se ifall det överensstämmer med det redan hashade lösenordet från databasen
 	const result = await bcrypt.compare(password, hash);
 	if (!result) {
 		return res.status(401).send({
@@ -66,10 +50,10 @@ const basic = async (req, res, next) => {
 		});
 	}
 
-	// finally, attach user to request
+	//Om allt stämmer så godkänn och...
 	req.user = user;
 
-	// pass request along
+	//Skicka sedan vidare
 	next();
 };
 

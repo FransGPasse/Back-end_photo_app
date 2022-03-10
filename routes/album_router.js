@@ -9,10 +9,10 @@ router.get("/", albumController.readAll);
 /* Hämtar ett album som tillhör användaren */
 router.get("/:id", albumController.readSpecific);
 
-/* Postar ett album */
+/* Skapar ett album */
 router.post("/", albumValidation.createAlbumRule, albumController.createAlbum);
 
-/* Lägger över ett foto till ett album */
+/* Lägger över ett foto i ett album */
 router.post(
 	"/:id/photo/",
 	albumValidation.addPhotoToAlbumRules,

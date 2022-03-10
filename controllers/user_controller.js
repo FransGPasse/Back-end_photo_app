@@ -2,20 +2,6 @@ const { matchedData, validationResult } = require("express-validator");
 const models = require("../models");
 const bcrypt = require("bcrypt");
 
-/* 
-//!Läser alla "User" i databasen photo_app
-const readAll = async (req, res) => {
-	const all_users = await models.User.fetchAll();
-
-	res.send({
-		status: "success",
-		data: {
-			users: all_users,
-		},
-	});
-};
- */
-
 //!Skapar en använare i databasen photo_app
 const register = async (req, res) => {
 	//Kollar efter valideringsfel
