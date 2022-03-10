@@ -26,20 +26,19 @@ const register = async (req, res) => {
 		return res.status(422).send({ status: "fail", data: errors.array() });
 	}
 
-	// get only the validated data from the request
+	//Hämtar ut den validerade datan från express validator:n
 	const validData = matchedData(req);
 
-	//Hashes the password 10 times
+	//Hashar lösenordet 10 gånger
 	validData.password = await bcrypt.hash(validData.password, 10);
 
-	console.log("The validated data:", validData);
-
+	//Försöker skapa en använare i databasen
 	try {
 		const user = await new models.User(validData).save();
-		debug("Created new user successfully: %O", user);
 
-		res.send({
+		res.status(200).send({
 			status: "success",
+			message: "User created successfully! 🥳",
 			data: {
 				user,
 			},

@@ -1,5 +1,4 @@
 const { body } = require("express-validator");
-const models = require("../models");
 
 //!Checks if the email inputted is an email address and is maximum 250 characters long
 const createRules = [

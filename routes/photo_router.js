@@ -10,9 +10,9 @@ router.get("/", photoController.showAll);
 router.get("/:id", photoController.showSpecific);
 
 /* Lägg till ett foto för den autentiserade användaren */
-router.post("/", photoValidation.createRules, photoController.register);
+router.post("/", photoValidation.createRules, photoController.postPhoto);
 
 /* Ändrar titeln, kommentaren eller URL:n på ett specifikt foto */
-router.put("/:id", photoValidation.updateRules, photoController.update);
+router.put("/:id", photoValidation.updateRules, photoController.updatePhoto);
 
 module.exports = router;

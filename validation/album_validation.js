@@ -20,7 +20,10 @@ const addPhotoToAlbumRules = [
 
 const createAlbumRule = [body("title").exists().isLength({ min: 3 })];
 
+const updateRules = [body("title").exists().isLength({ min: 3 })];
+
 module.exports = {
 	addPhotoToAlbumRules,
 	createAlbumRule,
+	updateRules,
 };

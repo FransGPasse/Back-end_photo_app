@@ -10,7 +10,7 @@ router.get("/", albumController.readAll);
 router.get("/:id", albumController.readSpecific);
 
 /* Postar ett album */
-router.post("/", albumValidation.createAlbumRule, albumController.register);
+router.post("/", albumValidation.createAlbumRule, albumController.createAlbum);
 
 /* Lägger över ett foto till ett album */
 router.post(
@@ -19,6 +19,7 @@ router.post(
 	albumController.postToAlbum
 );
 
-router.put;
+/* Uppdaterar ett album */
+router.put("/:id", albumValidation.createAlbumRule, albumController.updateAlbum);
 
 module.exports = router;

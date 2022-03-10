@@ -44,7 +44,7 @@ const showSpecific = async (req, res) => {
 };
 
 //!Skapar ett "photo" i databasen photo_app
-const register = async (req, res) => {
+const postPhoto = async (req, res) => {
 	//Kollar efter valideringsfel
 	const errors = validationResult(req);
 
@@ -53,6 +53,7 @@ const register = async (req, res) => {
 		return res.status(422).send({ status: "fail", data: errors.array() });
 	}
 
+	//Hämtar ut den validerade datan från express validator:n
 	const validData = matchedData(req);
 	validData.user_id = req.user.id;
 
@@ -79,7 +80,7 @@ const register = async (req, res) => {
 };
 
 //!Uppdaterar ett foto i databasen photo_app
-const update = async (req, res) => {
+const updatePhoto = async (req, res) => {
 	const Photo_id = req.params.id;
 	const User_id = req.user.id;
 
@@ -108,9 +109,10 @@ const update = async (req, res) => {
 		return res.status(422).send({ status: "fail", data: errors.array() });
 	}
 
-	//Försöker uppdatera ett foto i databasen
+	//Hämtar ut den validerade datan från express validator:n
 	const validData = matchedData(req);
 
+	//Försöker uppdatera fotot i databasen
 	try {
 		const updatedPhoto = await photo.save(validData);
 
@@ -126,10 +128,10 @@ const update = async (req, res) => {
 		res.status(500).send({
 			status: "error",
 			message:
-				"Something went wrong when trying to create a photo in the database. 😵",
+				"Something went wrong when trying to update a photo in the database. 😵",
 		});
 		throw error;
 	}
 };
 
-module.exports = { showAll, showSpecific, register, update };
+module.exports = { showAll, showSpecific, postPhoto, updatePhoto };

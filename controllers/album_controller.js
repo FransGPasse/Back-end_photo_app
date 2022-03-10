@@ -51,7 +51,7 @@ const readSpecific = async (req, res) => {
 };
 
 //!Skapar ett "album" i databasen photo_app
-const register = async (req, res) => {
+const createAlbum = async (req, res) => {
 	//Kollar efter valideringsfel
 	const errors = validationResult(req);
 
@@ -60,6 +60,7 @@ const register = async (req, res) => {
 		return res.status(422).send({ status: "fail", data: errors.array() });
 	}
 
+	//Hämtar ut den validerade datan från express validator:n
 	const validData = matchedData(req);
 	validData.user_id = req.user.id;
 
@@ -151,4 +152,65 @@ const postToAlbum = async (req, res) => {
 	}
 };
 
-module.exports = { readAll, readSpecific, register, postToAlbum };
+//!Uppdaterar ett album i databasen photo_app
+const updateAlbum = async (req, res) => {
+	const Album_id = req.params.id;
+	const User_id = req.user.id;
+
+	//Kollar så albumet finns och att det tillhör användaren
+	const album = await new models.Album({
+		id: Album_id,
+		User_id: User_id,
+	}).fetch({
+		require: false,
+	});
+
+	//Om inte så skickas denna felkoden
+	if (!album) {
+		res.status(404).send({
+			status: "fail",
+			data: "Either the album doesn't exist or the user isn't authorized. 😌",
+		});
+		return;
+	}
+
+	//Kollar efter valideringsfel
+	const errors = validationResult(req);
+
+	//Och skickar isåfall med felkod och var det blev fel
+	if (!errors.isEmpty()) {
+		return res.status(422).send({ status: "fail", data: errors.array() });
+	}
+
+	//Hämtar ut den validerade datan från express validator:n
+	const validData = matchedData(req);
+
+	//Försöker uppdatera albumet i databasen
+	try {
+		const updatedAlbum = await album.save(validData);
+
+		res.send({
+			status: "success",
+			data: {
+				updatedAlbum,
+			},
+		});
+
+		//Skickar en felkod om något gick snett från serverns håll
+	} catch (error) {
+		res.status(500).send({
+			status: "error",
+			message:
+				"Something went wrong when trying to update an album in the database. 😵",
+		});
+		throw error;
+	}
+};
+
+module.exports = {
+	readAll,
+	readSpecific,
+	createAlbum,
+	postToAlbum,
+	updateAlbum,
+};
