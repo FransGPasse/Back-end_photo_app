@@ -1,6 +1,6 @@
 const { body } = require("express-validator");
 
-//!Checks if the email inputted is an email address and is maximum 250 characters long
+//!Checks if the photo has a title and URL
 const createRules = [
 	body("title").exists().isLength({ min: 3 }),
 	body("url").exists().isURL(),
