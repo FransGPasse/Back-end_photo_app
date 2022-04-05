@@ -14,12 +14,16 @@ router.post("/", albumValidation.createAlbumRule, albumController.createAlbum);
 
 /* Lägger över ett foto i ett album */
 router.post(
-	"/:id/photo/",
+	"/:id/photos/",
 	albumValidation.addPhotoToAlbumRules,
 	albumController.postToAlbum
 );
 
 /* Uppdaterar ett album */
-router.put("/:id", albumValidation.createAlbumRule, albumController.updateAlbum);
+router.put(
+	"/:id",
+	albumValidation.createAlbumRule,
+	albumController.updateAlbum
+);
 
 module.exports = router;

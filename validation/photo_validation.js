@@ -1,6 +1,6 @@
 const { body } = require("express-validator");
 
-//!Checks if the photo has a title and URL
+//!Kollar så fotot har en titel och URL
 const createRules = [
 	body("title").exists().isLength({ min: 3 }),
 	body("url").exists().isURL(),

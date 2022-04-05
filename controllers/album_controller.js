@@ -100,7 +100,7 @@ const postToAlbum = async (req, res) => {
 	const relatedPhotos = req.user.related("Photo");
 
 	//Kollar så det finns ett album med ID som stämmer överens med ID:t ifrån JSON-datan i request body:n och...
-	usersPhoto = relatedPhotos.find((photo) => photo.id == validData.Photo_id);
+	usersPhoto = relatedPhotos.find((photo) => photo.id == validData.photo_id);
 
 	//...Kollar ifall det finns ett album med ID som stämmer överens med Album-ID:t från URL:n och...
 	usersAlbum = relatedAlbums.find((album) => album.id == req.params.id);
@@ -122,7 +122,7 @@ const postToAlbum = async (req, res) => {
 	const photo = album.related("Photo");
 
 	//Kollar ifall fotot med matchande ID redan finns i albumet och isåfall...
-	const existingPhoto = photo.find((photo) => photo.id == validData.Photo_id);
+	const existingPhoto = photo.find((photo) => photo.id == validData.photo_id);
 
 	//Skriv att det redan finns, annars...
 	if (existingPhoto) {
@@ -134,7 +134,7 @@ const postToAlbum = async (req, res) => {
 
 	//...Försök lägga till fotot till albumet via relationsdatabasen
 	try {
-		await album.Photo().attach(validData.Photo_id);
+		await album.Photo().attach(validData.photo_id);
 
 		res.status(200).send({
 			status: "success",

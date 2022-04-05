@@ -1,9 +1,9 @@
 const { body } = require("express-validator");
 const models = require("../models");
 
-//!Checks if the email inputted is an email address and is maximum 250 characters long
+//!Kollar så det finns ett foto med det ID:t
 const addPhotoToAlbumRules = [
-	body("Photo_id")
+	body("photo_id")
 		.exists()
 		.bail()
 		.custom(async (value) => {
