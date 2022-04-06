@@ -26,7 +26,9 @@ const register = async (req, res) => {
 			status: "success",
 			message: "User created successfully! 🥳",
 			data: {
-				user,
+				email: validData.email,
+				first_name: validData.first_name,
+				last_name: validData.last_name,
 			},
 		});
 	} catch (error) {

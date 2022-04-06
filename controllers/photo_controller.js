@@ -9,9 +9,7 @@ const showAll = async (req, res) => {
 	//Skickar statuskod 200 om det godkänns och skickar med fotonen. Om det inte godkänns är det fel vid autentiseringen och då kommer felkod därifrån.
 	res.status(200).send({
 		status: "success",
-		data: {
-			Photo: req.user.related("Photo"),
-		},
+		data: req.user.related("Photo"),
 	});
 };
 
@@ -37,9 +35,7 @@ const showSpecific = async (req, res) => {
 	//...Skickar vi ut det
 	res.send({
 		status: "success",
-		data: {
-			usersPhoto,
-		},
+		data: usersPhoto,
 	});
 };
 
@@ -55,7 +51,7 @@ const postPhoto = async (req, res) => {
 
 	//Hämtar ut den validerade datan från express validator:n
 	const validData = matchedData(req);
-	validData.user_id = req.user.id;
+	validData.User_id = req.user.id;
 
 	//Försöker lägga til ett foto i databasen
 	try {
@@ -63,9 +59,7 @@ const postPhoto = async (req, res) => {
 		res.send({
 			status: "success",
 			message: "Photo created successfully 👍🏼",
-			data: {
-				photo,
-			},
+			data: photo,
 		});
 
 		//Skickar en felkod om något gick snett från serverns håll
@@ -118,9 +112,7 @@ const updatePhoto = async (req, res) => {
 
 		res.send({
 			status: "success",
-			data: {
-				updatedPhoto,
-			},
+			data: updatedPhoto,
 		});
 
 		//Skickar en felkod om något gick snett från serverns håll

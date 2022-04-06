@@ -9,9 +9,7 @@ const readAll = async (req, res) => {
 	//Skickar statuskod 200 om det godkänns och skickar med albumet/albumen. Om det inte godkänns är det fel vid autentiseringen och då kommer felkod därifrån.
 	res.status(200).send({
 		status: "success",
-		data: {
-			Album: req.user.related("Album"),
-		},
+		data: req.user.related("Album"),
 	});
 };
 
@@ -44,9 +42,7 @@ const readSpecific = async (req, res) => {
 
 	res.send({
 		status: "success",
-		data: {
-			selectedAlbum,
-		},
+		data: selectedAlbum,
 	});
 };
 
@@ -62,7 +58,7 @@ const createAlbum = async (req, res) => {
 
 	//Hämtar ut den validerade datan från express validator:n
 	const validData = matchedData(req);
-	validData.user_id = req.user.id;
+	validData.User_id = req.user.id;
 
 	//Försöker lägga till ett album i databasen
 	try {
@@ -70,9 +66,7 @@ const createAlbum = async (req, res) => {
 		res.status(200).send({
 			status: "success",
 			message: "Album created successfully! 🥳",
-			data: {
-				album,
-			},
+			data: album,
 		});
 
 		//Skickar en felkod om något gick snett från serverns håll
@@ -128,7 +122,7 @@ const postToAlbum = async (req, res) => {
 	if (existingPhoto) {
 		return res.status(400).send({
 			status: "fail",
-			data: "Photo already exists. 🤨",
+			data: "Photo already in album. 🤨",
 		});
 	}
 
@@ -191,9 +185,7 @@ const updateAlbum = async (req, res) => {
 
 		res.send({
 			status: "success",
-			data: {
-				updatedAlbum,
-			},
+			data: updatedAlbum,
 		});
 
 		//Skickar en felkod om något gick snett från serverns håll
