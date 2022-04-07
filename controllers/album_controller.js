@@ -37,7 +37,7 @@ const readSpecific = async (req, res) => {
 
 	//Hämtar albumet med det inskickade ID:t och skickar med det relaterade fotonen
 	const selectedAlbum = await models.Album.fetchById(Album_id, {
-		withRelated: ["photos"],
+		withRelated: ["Photo"],
 	});
 
 	res.send({
